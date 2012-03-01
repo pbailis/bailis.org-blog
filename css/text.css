@@ -1,0 +1,20 @@
+body { font-family:"Palatino", serif; background-color: #FEFEFE; font-size: large; }
+#header * { margin-top: 0; margin-bottom: 0; color: #333; }
+#header h1 { font-size: 120%; }
+#header a { text-decoration: none; }
+h2.post-title, h2.static-title { font-size: 120%; margin-bottom: 0; }
+h2.post-title a, h2.static-title a { color: #000; }
+h2 { font-size: 120%; }
+h1 a, h2 a { text-decoration: none; }
+p, ul, ol { width: 40em; margin-left: 5px; }
+p.date { font-style: italic; margin-top: 0; font-size: small; }
+small { font-size: 70%; }
+p code, li>code { background-color:#EEEEFF; border:1px solid #DDDDDD; font-size:95%; padding:0 0.2em; }
+code, pre { font-family: "Menlo", "Consolas", "Inconsolata", "Anonymous", "Monaco", monospace;  }
+pre { border-left: 3px solid #DEDEDE; padding-left: 5px; }
+.content { line-height:1.4em;}
+.post { margin-left: auto; margin-right: auto; width: 40em; }
+a:link, a:visited {color: #222; text-decoration: underline; }
+a:active, a:hover {color: #444; text-decoration: underline; }
+#follow a { color: red }
+#follow { margin-top: 1em; }
