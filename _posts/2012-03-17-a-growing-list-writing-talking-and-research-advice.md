@@ -38,10 +38,9 @@ On Research
 * [Cargo Cult Science](http://www.lhup.edu/~DSIMANEK/cargocul.htm) by Richard Feynman<br>
 *tl;dr:* Don't let PR, hype, or zeitgeist interfere with real science.
 * [How to Have a Bad Career in Research/Academia](http://cs.berkeley.edu/~pattrsn/talks/BadCareer.pdf) by Dave Patterson<br>
-*tl;dr:* There are lots of ways to get behind in the academic game.
+*tl;dr:* Good advice on pitfalls of graduate school/academia and how to avoid them.
 * [Software is not science](http://matt-welsh.blogspot.com/2011/11/software-is-not-science.html) by Matt Welsh<br>
 *tl;dr:* Systems research is about principles, not artifacts.
-
 * [Database Metatheory: Asking the Big Queries](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.135.1614&rep=rep1&type=pdf)
 by Christos Papadimitriou<br>
 *tl;dr:* An awesome reflection on theory versus practice by one of the great CS theoreticians.
