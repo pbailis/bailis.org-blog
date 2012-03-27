@@ -22,4 +22,4 @@ Next time someone tells you their system is "eventually consistent," ask them tw
 
 <p id="strengthnote" style="font-size:90%">[1] Eventual convergence is likely the strongest convergence property we can guarantee given unbounded partition durations. Any system guaranteeing non-trivial convergence within a fixed amount of time would violate its liveness guarantees if partitioned for a longer period of time.</p>
 
-<p id="vendornote" style="font-size:90%">[2] In their technical documentation, vendors are usually forthcoming about these details. However, in promotional material and especially in superficial comparisons, these distinctions are often (sadly) omitted.</p>
+<p id="vendornote" style="font-size:90%">[2] In their technical documentation, vendors are usually forthcoming about these details, though they can be difficult to pick out. However, in promotional material and especially when making superficial comparisons, these distinctions are often omitted or glossed over.</p>
