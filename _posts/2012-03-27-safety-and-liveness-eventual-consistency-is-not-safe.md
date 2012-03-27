@@ -20,6 +20,6 @@ Next time someone tells you their system is "eventually consistent," ask them tw
 
 *This post was influenced in large part by discussions with [Ali Ghodsi](http://www.sics.se/~ali/), [Joe Hellerstein](http://db.cs.berkeley.edu/jmh/), and [Ion Stoica](http://www.cs.berkeley.edu/~istoica/).*
 
-<div id="strengthnote" style="font-size:90%">[1] Eventual convergence is likely the strongest convergence property we can guarantee given unbounded partition durations. Any system guaranteeing non-trivial convergence within a fixed amount of time would violate its liveness guarantees if partitioned for a longer period of time.</div><br>
+<p id="strengthnote" style="font-size:90%">[1] Eventual convergence is likely the strongest convergence property we can guarantee given unbounded partition durations. Any system guaranteeing non-trivial convergence within a fixed amount of time would violate its liveness guarantees if partitioned for a longer period of time.</p>
 
-<div id="vendornote" style="font-size:90%">[2] In their technical documentation, vendors are usually forthcoming about these details. However, in promotional material and especially in superficial comparisons, these distinctions are often (sadly) omitted.</div>
+<p id="vendornote" style="font-size:90%">[2] In their technical documentation, vendors are usually forthcoming about these details. However, in promotional material and especially in superficial comparisons, these distinctions are often (sadly) omitted.</p>
