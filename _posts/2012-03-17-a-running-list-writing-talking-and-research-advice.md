@@ -28,7 +28,7 @@ On Speaking
 ----------
 
 * [Slide Design for Developers](http://zachholman.com/posts/slide-design-for-developers/) by Zach Holman<br>
-*tl;dr:* Practical tips for making your slides better: color, huge fonts, slides as prop, not as a crutch.
+*tl;dr:* Practical tips for making your slides better: use color and huge fonts, and treat your slides as prop, not as a crutch.
 
 * [The Cognitive Style of Powerpoint](http://www.wired.com/wired/archive/11.09/ppt2.html) by Edward Tufte<br>
 *tl;dr:* Tufte provides many examples of how not to make slides, and his perspective on the "projector operating system" is valuable.
