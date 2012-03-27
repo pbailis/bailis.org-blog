@@ -20,6 +20,9 @@ On Writing
 * [LaTeX Usage Notes](http://www.cs.ucla.edu/~kohler/latex.html) by Eddie Kohler<br>
 *tl;dr:* A (beautifully typeset) document on proper LaTeX formatting, typography, and writing tips.
 
+* [Shell Scripts for Editing](http://matt.might.net/articles/shell-scripts-for-passive-voice-weasel-words-duplicates/) by Matt Might<br>
+*tl;dr:* Automatically highlight passive voice, weasel words, and lexical illusions using these scripts. ([Also good](https://github.com/devd/Academic-Writing-Check)) Thanks to Colin Scott and Shaddi Hasan.
+
 
 On Speaking
 ----------
@@ -35,12 +38,16 @@ On Research
 
 * [You and Your Research](http://www.cs.virginia.edu/~robins/YouAndYourResearch.html) by Edward Hamming<br>
 *tl;dr:* How to ask the right questions and scope your research for maximum impact by a guy who did both.
+
 * [Cargo Cult Science](http://www.lhup.edu/~DSIMANEK/cargocul.htm) by Richard Feynman<br>
 *tl;dr:* Don't let PR, hype, or zeitgeist interfere with real science.
+
 * [How to Have a Bad Career in Research/Academia](http://cs.berkeley.edu/~pattrsn/talks/BadCareer.pdf) by Dave Patterson<br>
 *tl;dr:* Good advice on pitfalls of graduate school/academia and how to avoid them.
+
 * [Software is not science](http://matt-welsh.blogspot.com/2011/11/software-is-not-science.html) by Matt Welsh<br>
 *tl;dr:* Systems research is about principles, not artifacts.
+
 * [Database Metatheory: Asking the Big Queries](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.135.1614&rep=rep1&type=pdf)
 by Christos Papadimitriou<br>
 *tl;dr:* An awesome reflection on theory versus practice by one of the great CS theoreticians.
