@@ -4,7 +4,7 @@ title: "Safety and Liveness: Eventual consistency is not safe"
 date: 2012-03-27
 ---
 
-*tl;dr: Eventual consistency is a liveness property--not a safety property--and is trivially satisfiable by itself. Liveness and safety properties should be taken together.*
+*tl;dr: Eventual consistency is a liveness property---not a safety property---and is trivially satisfiable by itself. Liveness and safety properties should be taken together.*
 
 Safety and liveness are two important properties of [all distributed systems](http://pi1.informatik.uni-mannheim.de/filepool/teaching/dependablesystems-2007/PDS_20070306.pdf). Informally, safety guarantees promise that nothing bad happens, while liveness guarantees promise that something good eventually happens. Every distributed system makes some form of safety and liveness guarantees, and some are stronger than others. For example, [atomic consistency](http://en.wikipedia.org/wiki/Linearizability) guarantees that operations will appear to happen instantaneously across the system (safety) but operations won't always succeed in the presence of network partitions (liveness, in the form of availability).
 
@@ -16,7 +16,7 @@ Today's eventually consistent systems do provide some form of safety properties,
 
 It's worth noting that safety without convergence also leads to problems. Read-your-writes, PRAM/monotonic writes, and causal consistency guarantees are trivially achievable using only local storage and no communication: simply keep a local copy of every key that you update and read from for every operation. This is not a convergent implementation. However, it satisfies [each of these consistency models](http://www.allthingsdistributed.com/2008/12/eventually_consistent.html) because they make safety but not liveness guarantees. If we were to add in our liveness requirement of convergence, our implementation would have to propagate writes between replicas.
 
-Next time someone tells you your system is "eventually consistent," ask them two questions: What versions of a data item can be returned at any time? What version will the system eventually choose to return? And remember: consider safety and liveness properties together. Otherwise, you probably have a trivially satisfiable requirement.
+Next time someone tells you their system is "eventually consistent," ask them two questions: What versions of a data item can be returned at any time? What version will the system eventually choose to return? And remember: consider safety and liveness properties together. Otherwise, you probably have a trivially satisfiable requirement.
 
 *This post was influenced in large part by discussions with [Ali Ghodsi](http://www.sics.se/~ali/), [Joe Hellerstein](http://db.cs.berkeley.edu/jmh/), and [Ion Stoica](http://www.cs.berkeley.edu/~istoica/).*
 
