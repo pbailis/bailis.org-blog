@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Safety and Liveness: Eventual Consistency Is Not Safe"
+title: "Safety and Liveness: Eventual consistency is not safe"
 date: 2012-03-27
 ---
 
@@ -10,7 +10,7 @@ Safety and liveness are two important properties of [all distributed systems](ht
 
 Many of today's distributed systems promise [eventual consistency](http://en.wikipedia.org/wiki/Eventual_consistency): after some period of time, all participants in the system agree on the same value. This is a useful property: good things will eventually happen without the need for intervention, even in the presence of partitions. However, under our definitions of safety and liveness, eventual consistency only provides liveness guarantees, not safety: Which value is eventually chosen? What values may be returned before participants "eventually" agree?
 
-As [recent work from UT Austin](http://www.cs.utexas.edu/users/princem/papers/cac-tr.pdf) points out, it's easy to satisfy liveness without being useful. If all replicas  always return the initial state, the system is eventually consistent. If all replicas return the value 42 in response to every request (even if you didn't write the value of 42), the system is eventually consistent. If replicas accept every thousandth write, the system is eventually consistent. These guarantees are somehow not what we would like, but they satisfy our definition of eventual consistency. Moreover, as the authors explain, accepting more read/write combinations doesn't necessarily translate to *stronger consistency*.  We'd like some notion of *convergence* that captures replica version exchange and agreement on a common states.<sup><a href="#strengthnote">1</a></sup>
+As [recent work from UT Austin](http://www.cs.utexas.edu/users/princem/papers/cac-tr.pdf) points out, it's easy to satisfy liveness without being useful. If all replicas  always return the initial state, the system is eventually consistent. If all replicas return the value 42 in response to every request (even if you didn't write the value of 42), the system is eventually consistent. If replicas accept every thousandth write, the system is eventually consistent. These guarantees are somehow not what we would like, but they satisfy our definition of eventual consistency. Moreover, as the authors explain, accepting more read/write combinations doesn't necessarily translate to *stronger consistency*.  We'd like some notion of *convergence* that captures both agreement on a common shared state and exchanging of writes.<sup><a href="#strengthnote">1</a></sup>
 
 Today's eventually consistent systems do provide some form of safety properties, even if they don't say so explicitly. For instance, in Riak, Cassandra, and DynamoDB, timestamp ordering is often used to break ties between versions of a data item. Moreover, these data stores won't return any values you haven't written to them, and replicas will converge to the last written value for each key. In short, many "eventually consistent" stores really offer something like "eventually last-writer-wins, and read-the-last-observed-value in the meantime" consistency. This is both more descriptive and more useful.
 
