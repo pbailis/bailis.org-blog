@@ -18,3 +18,7 @@ a:link, a:visited {color: #222; text-decoration: underline; }
 a:active, a:hover {color: #444; text-decoration: underline; }
 #follow a { color: red }
 #follow { margin-top: 1em; }
+.footnote { font-size:80%; width:100%; margin-bottom: 1em; }
+a.no-decorate { text-decoration: none; }
+sup, sub { height: 0; line-height: 0; vertical-align: baseline;	_vertical-align: bottom; position: relative; }
+sup { bottom: 1ex; }
