@@ -22,3 +22,4 @@ a:active, a:hover {color: #444; text-decoration: underline; }
 a.no-decorate { text-decoration: none; }
 sup, sub { height: 0; line-height: 0; vertical-align: baseline;	_vertical-align: bottom; position: relative; }
 sup { bottom: 1ex; }
+#footnotetitle { font-weight: bold; margin-bottom: .5em; }

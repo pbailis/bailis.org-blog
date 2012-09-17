@@ -22,7 +22,7 @@ Next time someone tells you their system is "eventually consistent," ask them tw
 
 <hr>
 
-<h3>Footnotes</h3>
+<div id="footnotetitle">Footnotes</div>
 
 <div class="footnote" id="strengthnote"><a class="no-decorate" href="#strengthnote">[1]</a> Eventual convergence is likely the strongest convergence property we can guarantee given unbounded partition durations. Any system guaranteeing non-trivial convergence within a fixed amount of time would violate its liveness guarantees if partitioned for a longer period of time.</div>
 
