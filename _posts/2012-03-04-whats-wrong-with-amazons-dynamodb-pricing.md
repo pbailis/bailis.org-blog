@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "What's Wrong with Amazon's DynamoDB Pricing?"
+title: "What's wrong with Amazon's DynamoDB pricing?"
 date: 2012-03-04
 ---
 

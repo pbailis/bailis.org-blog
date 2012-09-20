@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "A Running List: Writing, Speaking, and Research Advice"
+title: "A running list: Writing, speaking, and research advice"
 date: 2012-03-17
 ---
 
