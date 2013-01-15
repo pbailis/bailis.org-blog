@@ -16,16 +16,18 @@ like: how eventual is eventual consistency? how consistent is eventual
 consistency? These predictions help you profile your existing
 Cassandra cluster and determine which configuration of N,R, and W are
 the best fit for your application, expressed quantitatively in terms
-of latency, consistency, and durability.
+of latency, consistency, and durability (see <a href="#pbsoutput">output below</a>).
 
 There are several resources for understanding the theory behind PBS,
 including [talks](http://vimeo.com/37758648), [a
 demo](http://pbs.cs.berkeley.edu/#demo),
 [slides](http://www.bailis.org/talks/twitter-pbs.pdf), and an
-[academic paper](http://www.bailis.org/papers/pbs-vldb2012.pdf). My
-goal in this post is to show how to profile an existing cluster and
-briefly explain what's going on behind the scenes. If you prefer, you
-can download a (mostly) [fully automated demo script]({{ site.baseurl }}/blog/post_data/2013-01-14/pbs-1.2.0-demo.sh) instead.
+[academic paper](http://www.bailis.org/papers/pbs-vldb2012.pdf). We've
+used PBS to look at the effect of SSDs and disks, wide-area networks,
+and compare different web services' data store deployments. My goal in
+this post is to show how to profile an existing cluster and briefly
+explain what's going on behind the scenes. If you prefer, you can
+download a (mostly) [fully automated demo script]({{ site.baseurl }}/blog/post_data/2013-01-14/pbs-1.2.0-demo.sh) instead.
 
 Step One: Get a Cassandra cluster.
 ---
@@ -110,7 +112,7 @@ after writes, and even multi-versioned staleness. Remember that, aside
 from taking up some CPU on the predicting node, this profiling doesn't
 affect query performance:
 
-<div class="boundedbox20"><pre><code>Performing consistency prediction
+<div class="boundedbox20" id="pbsoutput"><pre><code>Performing consistency prediction
 100ms after a given write, with maximum version staleness of k=1
 N=3, R=1, W=1
 Probability of consistent reads: 0.678900
