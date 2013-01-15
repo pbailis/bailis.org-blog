@@ -190,8 +190,12 @@ implementing, and battle-testing these strategies, but I suspect that
 these kinds of techniques will have a substantial impact on future
 large-scale distributed data systems.
 
-*Thanks to Shivaram Venkataraman, Ali Ghodsi, Kay Ousterhout, Patrick
- Wendell, Sean Cribbs, and Andy Gross for assistance and feedback that
+*Thanks to [Shivaram Venkataraman](https://github.com/shivaram/), [Ali
+ Ghodsi](http://www.cs.berkeley.edu/~alig/), [Kay
+ Ousterhout](http://www.eecs.berkeley.edu/~keo/), [Patrick
+ Wendell](http://www.pwendell.com/), [Sean
+ Cribbs](https://twitter.com/seancribbs), and [Andy
+ Gross](https://twitter.com/argv0) for assistance and feedback that
  contributed to this post.*
 
 <hr>
