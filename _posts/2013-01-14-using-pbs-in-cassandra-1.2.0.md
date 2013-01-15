@@ -27,7 +27,7 @@ used PBS to look at the effect of SSDs and disks, wide-area networks,
 and compare different web services' data store deployments. My goal in
 this post is to show how to profile an existing cluster and briefly
 explain what's going on behind the scenes. If you prefer, you can
-download a (mostly) [fully automated demo script]({{ site.baseurl }}/blog/post_data/2013-01-14/pbs-1.2.0-demo.sh) instead.
+download a (mostly) [fully automated demo script]({{ site.baseurl }}/post_data/2013-01-14/pbs-1.2.0-demo.sh) instead.
 
 Step One: Get a Cassandra cluster.
 ---
@@ -207,7 +207,7 @@ have the lowest PID), click `MBeans`, then
 `org.apache.cassandra.service` (bottom of the menu), `PBSPredictor`,
 `Operations`, `enableConsistencyPredictionLogging`, then click the
 `enableConsistencyPredictionLogging` button (screenshot
-[here]({{ site.baseurl }}/blog/post_data/2013-01-14/enable-pbs-jmx.png)).
+[here]({{ site.baseurl }}/post_data/2013-01-14/enable-pbs-jmx.png)).
 </span>
 </p>
 
