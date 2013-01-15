@@ -55,16 +55,18 @@ Step Two: Enable PBS metrics on a Cassandra server.
 ---
 
 The PBS predictor works by profiling message latencies that it sees in
-a production cluster. The predictor logs message latencies in a
-circular buffer with a FIFO eviction policy (default: 20,000 reads and
-writes). By default, this logging is turned off, saving about 300k of
-memory. To turn it on, use a JMX tool to call the
-`org.apache.cassandra.service.PBSPredictor` MBean's
-`enableConsistencyPredictionLogging` method.
+a production cluster. You only need to enable logging on a single
+node, and all reads and writes that the node performs will be used in
+predictions.
 
-You can use `jconsole`<sup><a class="no-decorate"
-href="#jconsole-note">1</a></sup> or use a command line JMX interface like
-[`jmxterm`](http://wiki.cyclopsgroup.org/jmxterm/download):
+The prediction module logs latencies in a circular buffer with a FIFO
+eviction policy (default: 20,000 reads and writes). By default, this
+logging is turned off, saving about 300k of memory. To turn it on, use
+a JMX tool to call the `org.apache.cassandra.service.PBSPredictor`
+MBean's `enableConsistencyPredictionLogging` method. You can use
+`jconsole`<sup><a class="no-decorate"
+href="#jconsole-note">1</a></sup> or use a command line JMX interface
+like [`jmxterm`](http://wiki.cyclopsgroup.org/jmxterm/download):
 
 {% highlight bash %}
 wget http://downloads.sourceforge.net/cyclops-group/jmxterm-1.0-alpha-4-uber.jar
