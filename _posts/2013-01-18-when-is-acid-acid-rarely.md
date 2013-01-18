@@ -207,7 +207,7 @@ inconsistencies. Another possibility is that applications are
 performing their own concurrency control external to the database. The
 answer is likely a mix of each, but, stepping back, both of these
 strategies should remind you of what's often done in NoSQL-style data
-infrastructure. Perhaps a better question: when is "ACID" NoSQL?
+infrastructure. Perhaps there's a better question: when is "ACID" NoSQL?
 
 <span id="footnotetitle">Footnotes</span>
 
