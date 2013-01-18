@@ -1,0 +1,273 @@
+---
+layout: post
+title: "When is \"ACID\" ACID? Rarely."
+date: 2013-01-17
+comments: false
+---
+
+<style>
+
+table {
+border: 1px solid black;
+border-spacing:0px;
+width: 100%;
+}
+
+td.serializable {
+background-color: #EEE;
+}
+
+td {
+padding: 4px;
+text-align: center;
+border-bottom: 1px solid black;
+padding-right:10px;
+}
+
+.dbname {
+text-align: left;
+padding-right: 24px;
+}
+
+a.tablelink:link {text-decoration: none; color: black; }
+a.tablelink:hover {text-decoration: none; color: #666;}
+
+#legendbox {
+font-style: italic;
+text-align: left;
+width: 420px;
+}
+
+#legendlabel {
+font-weight: bold;
+text-align: left;
+}
+
+</style>
+
+*tl;dr: ACID and NewSQL databases rarely provide true ACID guarantees
+ by default, if they are supported at all. See <a href="#acidtable">the
+ table</a>.*
+
+Many databases today differentiate themselves from their NoSQL
+counterparts by claiming to support <a class="no-decorate"
+href="http://www.nuodb.com/explore/sql-cloud-database-product/">"100%
+ACID"</a> transactions or <a class="no-decorate"
+href="http://www.aerospike.com/performance/acid-compliance/">"guaranteeing
+strong consistency (ACID)."</a> In reality, few of these
+databases---including traditional "big iron" systems like
+Oracle---provide formal ACID guarantees.
+
+The textbook definition of ACID Isolation is <a class="no-decorate"
+href="http://en.wikipedia.org/wiki/Serializability">serializability</a>
+(e.g., <a
+href="http://db.cs.berkeley.edu/papers/fntdb07-architecture.pdf">Architecture
+of a Database System</a>, Section 6.2), which states that the outcome
+of executing a set of transactions should be equivalent to some serial
+execution of those transactions. This means that each transaction gets
+to operate on the database is if it were running by itself, which <a
+class="no-decorate"
+href="http://research.microsoft.com/en-us/people/philbe/chapter1.pdf">ensures
+database correctness, or consistency</a>. A database without
+serializability ("I" in ACID), cannot provide arbitrary read/write
+transactions and guarantee consistency ("C" in ACID), or correctness,
+of the database.<sup><a class="no-decorate" href="#arbitrary-note">1</a></sup>
+
+Nevertheless, most publicly available ACID and NewSQL databases do not
+provide serializability. In the table below, I've listed the isolation
+guarantees provided by 18 of these databases (docs hyperlinked in each
+cell). Only three of 18 databases provide serializability by
+default, and only 8 provide serializability as an option at all
+(shaded):
+
+<center>
+<table id="acidtable">
+<tr>
+<td class="dbname"><b>Database</b></td><td><b>Default Isolation</b></td><td><b>Maximum Isolation</b></td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://docs.actian.com/ingres/10s/database-administrator-guide/2349-isolation-levels">Actian Ingres 10.0/10S</a></td><td class="serializable">S</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://www.aerospike.com/performance/acid-compliance/">Aerospike</a></td><td>RC</td><td>RC</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://www.akiban.com/ak-docs/admin/persistit/Transactions.html">Akiban Persistit</a></td><td>SI</td><td>SI</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://www.clustrix.com/Portals/146389/docs/Clustrix_System_Administrators_Guide_v4.1.pdf">Clustrix CLX 4100</a></td><td>RR</td><td>?</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://media.gpadmin.me/wp-content/uploads/2012/11/GPDBAGuide.pdf">Greenplum 4.1</a></td><td>RC</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.perf%2Fsrc%2Ftpc%2Fdb2z_chooseisolationoption.htm">IBM DB2 10 for z/OS</a></td><td>CS</td><td>RR</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://publib.boulder.ibm.com/infocenter/idshelp/v115/index.jsp?topic=%2Fcom.ibm.sqls.doc%2Fids_sqs_1161.htm">IBM Informix 11.50</a></td><td>Depends</td><td>RR</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://dev.mysql.com/doc/refman/5.6/en/set-transaction.html">MySQL 5.6</a></td><td>RR</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://developers.memsql.com/docs/1b/isolationlevel.html">MemSQL 1b</a></td><td>RC</td><td>RC</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://msdn.microsoft.com/en-us/library/ms173763.aspx">MS SQL Server 2012</a></td><td>RC</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://www.nuodb.com/nuodb-online-documentation/references/r_Lang/r_Transactions.html">NuoDB</a></td><td>CR</td><td>CR</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://docs.oracle.com/cd/B28359_01/server.111/b28318/consist.htm#autoId8">Oracle 11g</a></td><td>RC</td><td>SI</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://docs.oracle.com/cd/E17277_02/html/TransactionGettingStarted/isolation.html">Oracle Berkeley DB</a></td><td class="serializable">S</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://docs.oracle.com/cd/E17277_02/html/TransactionGettingStarted/isolation.html">Oracle Berkeley DB JE</a></td><td>RR</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://www.postgresql.org/docs/9.2/static/transaction-iso.html">Postgres 9.2.2</a></td><td>RC</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://help.sap.com/hana/html/sql_set_transaction.html">SAP HANA</a></td><td>RC</td><td>SI</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="http://www.scaledb.com/pdfs/ScaleDB_Cluster_Manual.pdf">ScaleDB 1.02</a></td><td>RC</td><td>RC</td>
+</tr>
+
+<tr>
+<td class="dbname"><a class="tablelink" href="https://voltdb.com/">VoltDB</a></td><td class="serializable">S</td><td class="serializable">S</td>
+</tr>
+
+<tr>
+<td id="legendlabel"><span id="legendlabel">Legend</span></td><td colspan="2" id="legendbox"> RC: read committed, RR: repeatable read, S: serializability,<br>SI: snapshot isolation, CS: cursor stability, CR: consistent read</td>
+</tr>
+
+</table>
+</center>
+
+
+Instead of providing serializability, many these databases provide one
+of several weaker variants,<sup><a class="no-decorate"
+href="#weak-note">2</a></sup> often when marketing material and
+documentation claim otherwise.<sup><a class="no-decorate"
+href="#oracle-note">3</a></sup> There is no *fundamental* reason why a
+database shouldn't *support* serializability---[we have the
+algorithms](http://research.microsoft.com/en-us/people/philbe/ccontrol.aspx),
+and we've made great strides in improving ACID scalability.<sup><a
+class="no-decorate" href="#research-note">4</a></sup> So why not be
+serializable by default, or, at the least, provide serializability as
+an option at all? One key factor is performance: serializable
+isolation can limit concurrency; traditional techniques such as
+two-phase locking are expensive compared to, say, <a
+class="no-decorate"
+href="http://diaswww.epfl.ch/courses/adms07/papers/GrayLocks.pdf">grabbing
+short read locks on data items</a>. Additionally, it is [impossible to
+simultaneously achieve high availability and
+serializability](http://www.cs.cornell.edu/courses/CS614/2004sp/papers/DGS85.pdf)
+(though most of these database implementations are not highly
+available anyway, even when providing weaker models). Yet these
+benefits aren't free: the consistency anomalies that arise from weak
+levels are <a
+href="http://www.cse.iitb.ac.in/dbms/Data/Courses/CS632/2009/Papers/p492-fekete.pdf">well-understood</a>
+and <a
+href="http://www.vldb.org/pvldb/2/vldb09-185.pdf">quantifiable</a>.
+
+Where's the silver lining? Despite the fact that "ACID" databases
+typically aren't ACID---at least according to decades of research and
+development and formally proven guarantees regarding database
+correctness---we can still <a
+href="http://www.oracle.com/us/corporate/customers/customersearch/sabre-holdings-1-gg-ss-1849966.html">book
+travel tickets</a>, <a
+href="http://www.oracle.com/us/corporate/customers/customersearch/bank-of-baroda-1-db-ss-1875825.html">use
+our bank accounts</a>, and <a
+href="http://www.oracle.com/us/corporate/press/1871463">fight
+crime</a>. How? One possibility is that anomalies are likely rare, and
+the performance benefits of weak isolation outweigh the cost of
+inconsistencies. Another possibility is that applications are
+performing their own concurrency control external to the database. The
+answer is likely a mix of each, but, stepping back, both of these
+strategies should remind you of what's often done in NoSQL-style data
+infrastructure. Perhaps a better question: when is "ACID" NoSQL?
+
+<span id="footnotetitle">Footnotes</span>
+
+<p> <span class="footnote" id="arbitrary-note" markdown="1"><a
+class="no-decorate"
+href="#arbitrary-note">\[1\]</a>&nbsp;There's&nbsp;a considerable
+amount of research focusing on how to provide ACID consistency without
+serializability. As an example, we can restrict the types of
+operations that transactions can perform, as in
+[escrow](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.77.3821&rep=rep1&type=pdf)
+and
+[read-only](http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=1701989)
+transactions and with [monotonic
+logic](http://www.cidrdb.org/cidr2011/Papers/CIDR11_Paper35.pdf).
+However, the systems in question don't (usually) provide these sorts
+of "special-case" ACID-compliant transactions as features.</span></p>
+
+<p><span class="footnote" id="weak-note" markdown="1"><a
+class="no-decorate" href="#weak-note">\[2\]</a>&nbsp;There&nbsp;are a
+bunch of different weak isolation models to consider, but their
+definitions often vary depending on where you look. In this table,
+when necessary, I've mapped the stated guarantees back to a known
+model (e.g.,
+[Aerospike](http://www.aerospike.com/performance/acid-compliance/)); in
+any event, only the databases marked as such provide
+serializability. The best vendor documentation will tell you exactly
+what is implemented, even if the description doesn't match the
+name (see [Footnote 3](#oracle-note)). If you like database theory,
+the best description of these levels I've seen, describing both
+multi-version and lock-based databases, is&nbsp;<a
+href="http://www.pmg.lcs.mit.edu/~adya/pubs/phd.pdf">Atul Adya's MIT
+Ph.D. thesis from 1999</a>.</span> </p>
+
+<p> <span class="footnote" id="oracle-note" markdown="1"><a
+class="no-decorate" href="#oracle-note">\[3\]</a>&nbsp;As a detailed
+example of what can happen, consider Oracle 11g. (Admittedly, I'm
+picking on Oracle, due mostly to the wealth of available information.)
+11g's strongest isolation level is called "serializable," while [its
+description](http://docs.oracle.com/cd/B28359_01/server.111/b28318/consist.htm#BABIJEJI)
+matches [snapshot
+isolation](http://en.wikipedia.org/wiki/Snapshot_isolation). This
+behavior is well-documented in both the [academic
+literature](http://www.cse.iitb.ac.in/dbms/Data/Courses/CS632/2009/Papers/p492-fekete.pdf)
+and [by
+practitioners](http://iggyfernandez.wordpress.com/2010/09/20/dba-101-what-does-serializable-really-mean/). For
+more fun, try to figure out what can happen when you [execute
+distributed
+transactions](http://docs.oracle.com/cd/E11882_01/server.112/e25494/ds_txnman010.htm).</span></p>
+
+<p><span class="footnote" id="research-note" markdown="1"><a
+class="no-decorate" href="#research-note">\[4\]</a>&nbsp;As an
+example, check out [Michael
+Stonebraker](http://en.wikipedia.org/wiki/Michael_Stonebraker) and
+[Andy Pavlo](http://cs.brown.edu/~pavlo/)'s research on the 
+[HStore project](http://hstore.cs.brown.edu/) (commercialized via VoltDB) or
+[Google's
+Spanner](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/spanner-osdi2012.pdf). Each
+of these systems makes trade-offs (e.g., Spanner still uses two-phase
+locking for read-write transactions, which is expensive over wide-area
+networks, and doesn't support transactional read-your-write semantics)
+but is pushing the limits of true ACID scalability.</span></p>
+
+
