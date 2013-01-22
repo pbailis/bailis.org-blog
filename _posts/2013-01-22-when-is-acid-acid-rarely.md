@@ -65,7 +65,7 @@ href="http://db.cs.berkeley.edu/papers/fntdb07-architecture.pdf">Architecture
 of a Database System</a>, Section 6.2), which states that the outcome
 of executing a set of transactions should be equivalent to some serial
 execution of those transactions. This means that each transaction gets
-to operate on the database is if it were running by itself, which <a
+to operate on the database as if it were running by itself, which <a
 class="no-decorate"
 href="http://research.microsoft.com/en-us/people/philbe/chapter1.pdf">ensures
 database correctness, or consistency</a>. A database with
