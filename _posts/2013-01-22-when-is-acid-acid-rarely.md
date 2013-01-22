@@ -229,6 +229,13 @@ question: when is "ACID" NoSQL?
 **This is Part One of a two part series on Transactions and Consistency.<br>
 Coming next: recent research on Highly Available Transactions (HATs).**
 
+*Thanks to [Neil Conway](http://www.neilconway.org/), [Ali
+ Ghodsi](http://www.cs.berkeley.edu/~alig/), and [Alan
+ Fekete](http://www.cs.usyd.edu.au/~fekete) for early feedback on this
+ post.*
+
+<hr>
+
 <span id="footnotetitle">Footnotes</span>
 
 <p> <span class="footnote" id="arbitrary-note" markdown="1"><a
@@ -292,5 +299,4 @@ of these systems makes trade-offs (e.g., Spanner still uses two-phase
 locking for read-write transactions, which is expensive over wide-area
 networks, and doesn't support transaction-level read-your-write semantics)
 but is pushing the limits of true ACID scalability.</span></p>
-
 
