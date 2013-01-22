@@ -223,7 +223,7 @@ to manually perform their own synchronization. The answer is likely a
 mix of each, but, stepping back, these strategies should remind you of
 what's often done today in NoSQL-style data infrastructure: ["good
 enough" consistency](http://pbs.cs.berkeley.edu/#demo) and some
-custom, hand-rolled concurrency control. Perhaps there's a better
+hand-rolled, application-specific concurrency control. Perhaps there's a better
 question: when is "ACID" NoSQL?
 
 **This is Part One of a two part series on Transactions and Consistency.<br>
