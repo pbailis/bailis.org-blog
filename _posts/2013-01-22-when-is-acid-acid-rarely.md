@@ -204,7 +204,7 @@ regarding database correctness (although [perhaps marketing has
 rewritten the
 books](https://twitter.com/CurtMonash/status/292120597947895808))---we
 can still <a
-href="http://www.oracle.com/us/corporate/customers/customersearch/sabre-holdings-1-gg-ss-1849966.html">book
+href="http://www.oracle.com/us/corporate/customers/customersearch/sabre-holdings-1-gg-ss-1849966.html">reserve
 travel tickets</a>, <a
 href="http://www.oracle.com/us/corporate/customers/customersearch/bank-of-baroda-1-db-ss-1875825.html">use
 our bank accounts</a>, and <a
@@ -222,8 +222,8 @@ constraints](http://www.postgresql.org/docs/8.1/static/ddl-constraints.html)
 to manually perform their own synchronization. The answer is likely a
 mix of each, but, stepping back, these strategies should remind you of
 what's often done today in NoSQL-style data infrastructure: ["good
-enough" consistency](http://pbs.cs.berkeley.edu/#demo) and
-some custom, hand-rolled concurrency control. Perhaps there's a better
+enough" consistency](http://pbs.cs.berkeley.edu/#demo) and some
+custom, hand-rolled concurrency control. Perhaps there's a better
 question: when is "ACID" NoSQL?
 
 **This is Part One of a two part series on Transactions and Consistency.<br>
