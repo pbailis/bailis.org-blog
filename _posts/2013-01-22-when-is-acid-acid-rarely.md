@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "When is \"ACID\" ACID? Rarely."
-date: 2013-01-17
+date: 2013-01-22
 comments: false
 ---
 
@@ -56,7 +56,7 @@ ACID"</a> transactions or <a class="no-decorate"
 href="http://www.aerospike.com/performance/acid-compliance/">"guaranteeing
 strong consistency (ACID)."</a> In reality, few of these
 databases---including traditional "big iron" systems like
-Oracle---provide formal ACID guarantees.
+Oracle---provide formal ACID guarantees, [even when they claim to do so](http://docs.oracle.com/cd/E11882_01/server.112/e10713/transact.htm#i1666).
 
 The textbook definition of ACID Isolation is <a class="no-decorate"
 href="http://en.wikipedia.org/wiki/Serializability">serializability</a>
@@ -68,17 +68,19 @@ execution of those transactions. This means that each transaction gets
 to operate on the database is if it were running by itself, which <a
 class="no-decorate"
 href="http://research.microsoft.com/en-us/people/philbe/chapter1.pdf">ensures
-database correctness, or consistency</a>. A database without
-serializability ("I" in ACID), cannot provide arbitrary read/write
-transactions and guarantee consistency ("C" in ACID), or correctness,
-of the database.<sup><a class="no-decorate" href="#arbitrary-note">1</a></sup>
+database correctness, or consistency</a>. A database with
+serializability ("I" in ACID), provides arbitrary read/write
+transactions and guarantees consistency ("C" in ACID), or correctness,
+of the database. Without serializability, ACID, particularly
+consistency, is generally<sup><a class="no-decorate"
+href="#arbitrary-note">1</a></sup> not guaranteed
 
-Nevertheless, most publicly available ACID and NewSQL databases do not
-provide serializability. In the table below, I've listed the isolation
-guarantees provided by 18 of these databases (docs hyperlinked in each
-cell). Only three of 18 databases provide serializability by
-default, and only 8 provide serializability as an option at all
-(shaded):
+Nevertheless, most publicly available databases (often claiming to
+provide "ACID" transactions) do not provide serializability. I've
+compiled the isolation guarantees provided by 18 popular databases
+below (sources hyperlinked). Only three of 18 databases provide
+serializability by default, and only 8 provide serializability as an
+option at all (shaded):
 
 <center>
 <table id="acidtable">
@@ -174,40 +176,52 @@ href="#oracle-note">3</a></sup> There is no *fundamental* reason why a
 database shouldn't *support* serializability---[we have the
 algorithms](http://research.microsoft.com/en-us/people/philbe/ccontrol.aspx),
 and we've made great strides in improving ACID scalability.<sup><a
-class="no-decorate" href="#research-note">4</a></sup> So why not be
-serializable by default, or, at the least, provide serializability as
-an option at all? One key factor is performance: serializable
-isolation can limit concurrency; traditional techniques such as
-two-phase locking are expensive compared to, say, <a
+class="no-decorate" href="#research-note">4</a></sup> So why not
+provide serializability by default, or, at the least, provide
+serializability as an option at all? One key factor is performance:
+serializable isolation can limit concurrency; traditional techniques
+such as two-phase locking are expensive compared to, say, <a
 class="no-decorate"
-href="http://diaswww.epfl.ch/courses/adms07/papers/GrayLocks.pdf">grabbing
+href="http://diaswww.epfl.ch/courses/adms07/papers/GrayLocks.pdf">taking
 short read locks on data items</a>. Additionally, it is [impossible to
 simultaneously achieve high availability and
 serializability](http://www.cs.cornell.edu/courses/CS614/2004sp/papers/DGS85.pdf)
 (though most of these database implementations are not highly
-available anyway, even when providing weaker models). Yet these
-benefits aren't free: the consistency anomalies that arise from weak
-levels are <a
+available anyway, even when providing weaker models). A third reason
+is that transactions may be less likely to deadlock or abort due to
+conflicts under weaker isolation. However, these benefits aren't free:
+the consistency anomalies that arise from the weak levels shown above
+are <a
 href="http://www.cse.iitb.ac.in/dbms/Data/Courses/CS632/2009/Papers/p492-fekete.pdf">well-understood</a>
 and <a
 href="http://www.vldb.org/pvldb/2/vldb09-185.pdf">quantifiable</a>.
 
-Where's the silver lining? Despite the fact that "ACID" databases
-typically aren't ACID---at least according to decades of research and
-development and formally proven guarantees regarding database
-correctness---we can still <a
+Where's the silver lining? Despite the fact that many "ACID" databases
+don't provide ACID properties---at least according to decades of
+research and development and formally proven guarantees regarding
+database correctness (though [perhaps marketing has rewritten the books](https://twitter.com/CurtMonash/status/292120597947895808))---we can still <a
 href="http://www.oracle.com/us/corporate/customers/customersearch/sabre-holdings-1-gg-ss-1849966.html">book
 travel tickets</a>, <a
 href="http://www.oracle.com/us/corporate/customers/customersearch/bank-of-baroda-1-db-ss-1875825.html">use
 our bank accounts</a>, and <a
 href="http://www.oracle.com/us/corporate/press/1871463">fight
-crime</a>. How? One possibility is that anomalies are likely rare, and
-the performance benefits of weak isolation outweigh the cost of
+crime</a>. How? One possibility is that anomalies are rare and the
+performance benefits of weak isolation outweigh the cost of
 inconsistencies. Another possibility is that applications are
-performing their own concurrency control external to the database. The
-answer is likely a mix of each, but, stepping back, both of these
-strategies should remind you of what's often done in NoSQL-style data
-infrastructure. Perhaps there's a better question: when is "ACID" NoSQL?
+performing their own concurrency control external to the database;
+database programmers can use commands like [SELECT FOR
+UPDATE](http://dev.mysql.com/doc/refman/5.5/en/innodb-locking-reads.html),
+[manual LOCK
+TABLE](http://dev.mysql.com/doc/refman/5.6/en/lock-tables.html), and
+[UNIQUE
+constraints](http://www.postgresql.org/docs/8.1/static/ddl-constraints.html)
+to manually perform their own synchronization. The answer is likely a
+mix of each, but, stepping back, these strategies should remind you of
+what's often done in NoSQL-style data infrastructure. Perhaps there's
+a better question: when is "ACID" NoSQL?
+
+**This is Part One of a two part series on Transactions and Consistency.<br>
+Coming next: recent research on Highly Available Transactions (HATs).**
 
 <span id="footnotetitle">Footnotes</span>
 
@@ -221,9 +235,12 @@ operations that transactions can perform, as in
 and
 [read-only](http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=1701989)
 transactions and with [monotonic
-logic](http://www.cidrdb.org/cidr2011/Papers/CIDR11_Paper35.pdf).
-However, the systems in question don't (usually) provide these sorts
-of "special-case" ACID-compliant transactions as features.</span></p>
+logic](http://www.cidrdb.org/cidr2011/Papers/CIDR11_Paper35.pdf). We
+can also consider hypothetical databases that introduce dummy
+transactions to fill in anomalous behavior in the serial schedule,
+which would be silly but technically serializable. The systems in
+question don't (usually) provide these sorts of "special-case"
+ACID-compliant transactions as features.</span></p>
 
 <p><span class="footnote" id="weak-note" markdown="1"><a
 class="no-decorate" href="#weak-note">\[2\]</a>&nbsp;There&nbsp;are a
@@ -267,7 +284,7 @@ Stonebraker](http://en.wikipedia.org/wiki/Michael_Stonebraker) and
 Spanner](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/spanner-osdi2012.pdf). Each
 of these systems makes trade-offs (e.g., Spanner still uses two-phase
 locking for read-write transactions, which is expensive over wide-area
-networks, and doesn't support transactional read-your-write semantics)
+networks, and doesn't support transaction-level read-your-write semantics)
 but is pushing the limits of true ACID scalability.</span></p>
 
 
