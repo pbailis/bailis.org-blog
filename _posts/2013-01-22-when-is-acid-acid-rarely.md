@@ -79,7 +79,7 @@ Nevertheless, most publicly available databases (often claiming to
 provide "ACID" transactions) do not provide serializability. I've
 compiled the isolation guarantees provided by 18 popular databases
 below (sources hyperlinked). Only three of 18 databases provide
-serializability by default, and only 9 provide serializability as an
+serializability by default, and only nine provide serializability as an
 option at all (shaded):
 
 <center>
