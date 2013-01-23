@@ -79,7 +79,7 @@ Nevertheless, most publicly available databases (often claiming to
 provide "ACID" transactions) do not provide serializability. I've
 compiled the isolation guarantees provided by 18 popular databases
 below (sources hyperlinked). Only three of 18 databases provide
-serializability by default, and only 8 provide serializability as an
+serializability by default, and only 9 provide serializability as an
 option at all (shaded):
 
 <center>
@@ -109,7 +109,7 @@ option at all (shaded):
 </tr>
 
 <tr>
-<td class="dbname"><a class="tablelink" href="http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.perf%2Fsrc%2Ftpc%2Fdb2z_chooseisolationoption.htm">IBM DB2 10 for z/OS</a></td><td>CS</td><td>RR</td>
+<td class="dbname"><a class="tablelink" href="http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.perf%2Fsrc%2Ftpc%2Fdb2z_chooseisolationoption.htm">IBM DB2 10 for z/OS</a></td><td>CS</td><td class="serializable">s</td>
 </tr>
 
 <tr>
