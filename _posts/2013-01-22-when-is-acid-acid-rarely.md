@@ -109,7 +109,7 @@ option at all (shaded):
 </tr>
 
 <tr>
-<td class="dbname"><a class="tablelink" href="http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.perf%2Fsrc%2Ftpc%2Fdb2z_chooseisolationoption.htm">IBM DB2 10 for z/OS</a></td><td>CS</td><td class="serializable">s</td>
+<td class="dbname"><a class="tablelink" href="http://publib.boulder.ibm.com/infocenter/dzichelp/v2r2/index.jsp?topic=%2Fcom.ibm.db2z10.doc.perf%2Fsrc%2Ftpc%2Fdb2z_chooseisolationoption.htm">IBM DB2 10 for z/OS</a></td><td>CS</td><td class="serializable">S</td>
 </tr>
 
 <tr>
