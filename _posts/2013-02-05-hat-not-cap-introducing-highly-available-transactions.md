@@ -6,7 +6,7 @@ comments: false
 ---
 
 *tl;dr: [Highly Available
- Transactions](http://arxiv.org/pdf/1302.0309v1.pdf) show it's
+ Transactions](http://arxiv.org/pdf/1302.0309.pdf) show it's
  possible to achieve many of the transactional guarantees of today's
  databases without sacrificing high availability and low latency.*
 
@@ -35,7 +35,7 @@ systems](http://www.rfc-editor.org/rfc/rfc677.txt)), data store
 designers have taken CAP to heart, some choosing consistency and
 others choosing availability and low latency.
 
-While the CAP Theorem is fairly well-understood, the relationship
+While the CAP Theorem is fairly well understood, the relationship
 between CAP and [ACID transactions](http://en.wikipedia.org/wiki/ACID)
 is not. If we consider the current lack of highly available systems
 providing arbitrary multi-object operations with ACID-like semantics,
@@ -55,7 +55,7 @@ primary copies.
 
 #### HATs for Everyone
 
-[In recent research at UC Berkeley](http://arxiv.org/pdf/1302.0309v1.pdf),
+[In recent research at UC Berkeley](http://arxiv.org/pdf/1302.0309.pdf),
 we show that high availability and transactions are *not* mutually
 exclusive: it is possible to match the semantics provided by many of
 today's "ACID" and "NewSQL" databases without sacrificing high
@@ -108,7 +108,7 @@ partitions, although, in the absence of partitions, data [may not be
 very stale](http://pbs.cs.berkeley.edu/#demo). HATs cannot be "100%
 ACID compliant" as they cannot guarantee serializability, yet they
 meet the default and sometimes maximum guarantees of many "ACID"
-databases. HATs cannot not guarantee global integrity constraints
+databases. HATs cannot guarantee global integrity constraints
 (e.g., uniqueness constraints across data items) but can perform local
 checking of predicates (e.g., per-record integrity maintenance like
 null value checks). In the report, we classify many of these anomalies
@@ -144,12 +144,12 @@ scalability. Once the algorithms are better explored, I would
 personally like to help integrate HATs into existing data stores, much
 as we recently did with our [PBS work in
 Cassandra]({{site.baseurl}}/using-pbs-in-cassandra-1.2.0/). It'd be
-pretty cool to port an application running on Oracle to a NoSQL store
-and provide the same semantic guarantees with substantially improved
-performance, availability, and cost effectiveness. We're also working
-on additional theoretical results to further explain HATs in the
-context of CAP. I plan to share these results as we develop them
-further.
+interesting to port an application running on Oracle Database to a
+NoSQL store and provide the same semantic guarantees with
+substantially improved performance, availability, and cost
+effectiveness. We're also working on additional theoretical results to
+further explain HATs in the context of CAP. I plan to share these
+results as we develop them further.
 
 In the meantime, we'd welcome feedback on our work so far and are
 curious where HATs make sense in your stack. If you're an application
