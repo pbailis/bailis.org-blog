@@ -226,8 +226,10 @@ enough" consistency](http://pbs.cs.berkeley.edu/#demo) and some
 hand-rolled, application-specific concurrency control. Perhaps there's a better
 question: when is "ACID" NoSQL?
 
-**This is Part One of a two part series on Transactions and Consistency.<br>
-Coming next: recent research on Highly Available Transactions (HATs).**
+**This is Part One of a two part series on Transactions and
+Consistency.<br> [Part Two: recent research on Highly Available
+Transactions
+(HATs).]({{site.baseurl}}/hat-not-cap-introducing-highly-available-transactions)**
 
 *Thanks to [Neil Conway](http://www.neilconway.org/), [Ali
  Ghodsi](http://www.cs.berkeley.edu/~alig/), and [Alan
