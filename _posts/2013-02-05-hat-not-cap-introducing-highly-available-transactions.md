@@ -95,9 +95,9 @@ We believe that this is the strongest set of guarantees that have been
 provided with high availability, and many of the algorithms---like the
 atomicity and isolation guarantees---are brand new, namely because
 they don't use masters or other coordination on transactions' fast
-paths. [The brief report we just released](http://arxiv.org/abs/1302.0309)
-runs slightly over five pages and includes sample algorithms for each
-guarantee.
+paths. [The brief report we just
+released](http://arxiv.org/abs/1302.0309) runs slightly over five
+pages and includes proof-of-concept algorithms for each guarantee.
 
 #### Trade-offs
 
@@ -156,7 +156,7 @@ curious where HATs make sense in your stack. If you're an application
 developer who wishes she had transactional atomicity or weak
 isolation, a distributed database developer interested in HATs, or you
 just think HATs are cool, let us know. We're always looking for
-anecdotes, workloads, and conversation.
+anecdotes, workloads, and good conversation.
 
 **This is Part Two of a two part series on Transactions and
 Availability.<br> [Part One: When is ACID
