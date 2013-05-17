@@ -1,0 +1,465 @@
+
+<!-- 
+
+N.B. This code is egregiously ugly and generally horrendous. I suggest
+you not look any further. What started off as a first exploration of
+D3 turned into an annoying situation. I wanted to keep the force model
+that's built into D3 but ended up just hacking around the D3 data
+model instead of following idiomatic D3 style.
+
+So yeah, If you're trying to gauge my engineering abilities, let's
+talk about distributed systems instead.
+
+ -->
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #000;
+  stroke-opacity: .9;
+}
+
+circle {
+ color: #fff;
+}
+
+td {
+padding: 5px;
+}
+
+.self-ping {
+background-color: #eee;
+}
+
+body {
+font: 12px sans-serif;
+}
+
+</style>
+
+<style id="textstyle">
+.tinytext {
+  font: 12px sans-serif;
+}
+.nodetext {
+  font: 12px sans-serif;
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+</style>
+
+
+<body>
+<script src="http://bailis.org/blog/post_data/common/js/d3.v3.min.js"></script>
+
+<center>
+
+
+
+<div id="graph" style="margin-top: 1em; margin-bottom:1em;">
+</div>
+
+<b>Percentile Latency:</b> 
+<form>
+<input type="radio" name="pctile" onclick="checkChanged()" value="avg" checked>Average
+<input type="radio" name="pctile" onclick="checkChanged()" value="0.5">50th
+<input type="radio" name="pctile" onclick="checkChanged()" value="0.75">75th
+<input type="radio" name="pctile" onclick="checkChanged()" value="0.95">95th
+<input type="radio" name="pctile" onclick="checkChanged()" value="0.99">99th
+<input type="radio" name="pctile" onclick="checkChanged()" value="0.999">99.9th
+<input type="radio" name="pctile" onclick="checkChanged()" value="0.9999">99.99th
+<input type="radio" name="pctile" onclick="checkChanged()" value="0.99999">99.999th
+</form>
+
+<table>
+<tr><td>
+
+
+<td>
+<table>
+<tr align="center"><td colspan="4"><b>Three hosts within us-east-b</b></td></tr>
+<tr>
+<td></td><td>B1</td><td>B2</td><td>B3</td>
+</tr>
+<tr>
+  <td>B1</td>
+  <td class="self-ping"></td>
+  <td id="11-12"></td>
+  <td id="11-13"></td>
+</tr>
+<tr>
+  <td>B2</td>
+  <td id="12-11"></td>
+  <td class="self-ping"></td>
+  <td id="12-13"></td>
+</tr>
+<tr>
+  <td>B3</td>
+  <td id="13-11"></td>
+  <td id="13-12"></td>
+  <td class="self-ping"></td>
+</tr>
+</table>
+</td>
+
+<td width=60px></td>
+
+
+
+<td>
+<table>
+<tr align="center"><td colspan="4"><b>Across us-east zones</b></td></tr>
+<tr><td></td><td>B</td><td>C</td><td>D</td></tr>
+<tr>
+  <td>B</td>
+  <td class="self-ping"></td>
+  <td id="8-9"></td>
+  <td id="8-10"></td>
+</tr>
+<tr>
+<td>C</td>
+  <td id="9-8"></td>
+  <td class="self-ping"></td>
+  <td id="9-10"></td>
+</tr>
+<tr>
+<td>D</td>
+  <td id="10-8"></td>
+  <td id="10-9"></td>
+  <td class="self-ping"></td>
+</tr>
+</table>
+</td>
+
+</tr>
+</table>
+
+<table style="margin-top:1em;">
+<tr align="center"><td colspan="9"><b>Across all EC2 Regions</b></td></tr>
+<tr><td></td><td>Virginia</td><td>Oregon</td><td>California</td><td>Ireland</td><td>Singapore</td><td>Tokyo</td><td>Sydney</td><td>São Paulo</td></tr>
+<tr>
+
+<td>Virginia</td>
+  <td class="self-ping"></td>
+  <td id="0-1"></td>
+  <td id="0-2"></td>
+  <td id="0-3"></td>
+  <td id="0-4"></td>
+  <td id="0-5"></td>
+  <td id="0-6"></td>
+  <td id="0-7"></td>
+</tr>
+<tr>
+<td>Oregon</td>
+  <td id="1-0"></td>
+  <td class="self-ping"></td>
+  <td id="1-2"></td>
+  <td id="1-3"></td>
+  <td id="1-4"></td>
+  <td id="1-5"></td>
+  <td id="1-6"></td>
+  <td id="1-7"></td>
+</tr>
+<tr>
+<td>California</td>
+  <td id="2-0"></td>
+  <td id="2-1"></td>
+  <td class="self-ping"></td>
+  <td id="2-3"></td>
+  <td id="2-4"></td>
+  <td id="2-5"></td>
+  <td id="2-6"></td>
+  <td id="2-7"></td>
+</tr>
+<tr>
+<td>Ireland</td>
+  <td id="3-0"></td>
+  <td id="3-1"></td>
+  <td id="3-2"></td>
+  <td class="self-ping"></td>
+  <td id="3-4"></td>
+  <td id="3-5"></td>
+  <td id="3-6"></td>
+  <td id="3-7"></td>
+</tr>
+<tr>
+<td>Singapore</td>
+  <td id="4-0"></td>
+  <td id="4-1"></td>
+  <td id="4-2"></td>
+  <td id="4-3"></td>
+  <td class="self-ping"></td>
+  <td id="4-5"></td>
+  <td id="4-6"></td>
+  <td id="4-7"></td>
+</tr>
+<tr>
+<td>Tokyo</td>
+  <td id="5-0"></td>
+  <td id="5-1"></td>
+  <td id="5-2"></td>
+  <td id="5-3"></td>
+  <td id="5-4"></td>
+  <td class="self-ping"></td>
+  <td id="5-6"></td>
+  <td id="5-7"></td>
+</tr>
+<tr>
+<td>Sydney</td>
+  <td id="6-0"></td>
+  <td id="6-1"></td>
+  <td id="6-2"></td>
+  <td id="6-3"></td>
+  <td id="6-4"></td>
+  <td id="6-5"></td>
+  <td class="self-ping"></td>
+  <td id="6-7"></td>
+</tr>
+<tr>
+<td>São Paulo</td>
+  <td id="7-0"></td>
+  <td id="7-1"></td>
+  <td id="7-2"></td>
+  <td id="7-3"></td>
+  <td id="7-4"></td>
+  <td id="7-5"></td>
+  <td id="7-6"></td>
+  <td class="self-ping"></td>
+</tr>
+</table>
+
+
+
+</center>
+
+<div id="chart"></div>
+
+<script>
+
+var pctileMap;
+d3.json("ping-pctiles.json", function(error, json) {
+  if (error) return console.warn(error);
+  pctileMap = json.pctiles;
+  checkChanged();
+});
+
+
+function checkChanged() {
+var radios = document.getElementsByName('pctile');
+
+for (var i = 0, length = radios.length; i < length; i++) {
+    if (radios[i].checked) {
+        startPlot(radios[i].value);
+        return;
+    }
+}
+}
+
+
+
+function startPlot(pctile) {
+
+var w = 320,
+    h = 300,
+    fill = d3.scale.category20();
+
+var minRegion=Number.POSITIVE_INFINITY, maxRegion=Number.NEGATIVE_INFINITY, minAZ=Number.POSITIVE_INFINITY, maxAZ=Number.NEGATIVE_INFINITY, minEastB=Number.POSITIVE_INFINITY, maxEastB=Number.NEGATIVE_INFINITY;
+
+for(var src = 0; src < 7; ++src) {
+for(var dst = 0; dst < 7; ++dst) {
+  if(src == dst) { continue; }
+  var rtt = pctileMap[src][dst][pctile];
+  if(rtt < minRegion) { minRegion = rtt; }
+  if(rtt > maxRegion) { maxRegion = rtt; }
+}
+}
+
+for(var src = 8; src < 11; ++src) {
+for(var dst = 8; dst < 11; ++dst) {
+  if(src == dst) { continue; }
+  var rtt = pctileMap[src][dst][pctile];
+  if(rtt < minAZ) { minAZ = rtt; }
+  if(rtt > maxAZ) { maxAZ = rtt; }
+}
+}
+
+for(var src = 11; src < 14; ++src) {
+for(var dst = 11; dst < 14; ++dst) {
+  if(src == dst) { continue; }
+  var rtt = pctileMap[src][dst][pctile];
+  if(rtt < minEastB) { minEastB = rtt; }
+  if(rtt > maxEastB) { maxEastB = rtt; }
+}
+}
+
+function isMax(src, value) {
+   if(src < 8) { return value == maxRegion; }
+   if(src < 11) { return value == maxAZ; }
+   else { return value == maxEastB; }
+}
+
+
+function isMin(src, value) {
+   if(src < 8) { return value == minRegion; }
+   if(src < 11) { return value == minAZ; }
+   else { return value == minEastB; }
+}
+
+var scale=5;
+
+function getLatency(d) {
+ var ret= pctileMap[d.source.index][d.target.index][pctile];
+
+  var cell = document.getElementById(d.source.index+"-"+d.target.index);
+
+
+ if(isMax(d.source.index, ret)) {
+  cell.style.backgroundColor = "#F44";
+ }
+ else if(isMin(d.source.index, ret)) {
+    cell.style.backgroundColor = "#4F4";
+ }
+ else {
+     cell.style.backgroundColor = "#FFF";
+ }
+
+  if(ret < 1000)
+     ret = ret.toPrecision(3);
+  else
+     ret = ret.toPrecision(4);
+  cell.innerHTML=ret;
+ return ret*scale;
+}
+
+
+document.getElementById("graph").innerHTML="";
+
+var vis = d3.select("#graph")
+  .append("svg:svg")
+    .attr("width", w)
+    .attr("height", h)
+    .attr("pointer-events", "all")
+    .attr("style", "border: 1px solid black;")
+  .append('svg:g')
+    .call(d3.behavior.zoom().on("zoom", redraw))
+  .append('svg:g');
+
+
+
+var rect = vis.append('svg:rect')
+    .attr('width', w)
+    .attr('height', h)
+    .attr('fill', 'white');
+
+function redrawHelper(scale, translate) {
+
+  vis.attr("transform",
+      "translate(" + translate + ")"
+      + " scale(" + scale + ")");
+  rect.attr("width", w*40)
+      .attr("height", h*40)
+      .attr("x", -2000)
+      .attr("y", -2000);
+
+  circle.attr("r", Math.max(1, 4/scale));
+  document.getElementById("textstyle").innerHTML = " .nodetext { font: "+14/scale+"px sans-serif;}";
+  if(scale > 1 || ((scale > .5) && (pctile == "0.999" || pctile == "0.99" || pctile=="0.9999")) || (scale > .1 &&  pctile == "0.99999"))
+      document.getElementById("textstyle").innerHTML += " .tinytext { font: "+14/scale+"px sans-serif;}";
+
+}
+
+var defaultZoom = .13;
+var defaultTranslateX = w/2-30;
+var defaultTranslateY = h/2-30;
+
+function redraw() {
+
+  redrawHelper(d3.event.scale*defaultZoom, [d3.event.translate[0]+defaultTranslateX*d3.event.scale, d3.event.translate[1]+defaultTranslateY*d3.event.scale]);
+}
+
+
+var force = d3.layout.force()
+    .charge(-10)
+    .linkDistance(getLatency)
+    .size([w, h]).start();
+
+var svg =vis;
+
+var circle;
+
+d3.json("ping-graph.json", function(error, graph) {
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+    .enter().append("line")
+      .attr("class", "link");
+
+var node = svg.selectAll(".node")
+    .data(graph.nodes)
+  .enter().append("g")
+    .attr("class", "node")
+    .call(force.drag);
+
+node.append("circle");
+node.append("text");
+
+circle = svg.append("svg:g").selectAll("circle")
+    .data(force.nodes())
+    .enter().append("svg:circle")
+    .attr("r", 4)
+    .call(force.drag);
+
+var text = svg.append("svg:g").selectAll("text")
+    .data(force.nodes())
+    .enter().append("svg:text") 
+    .attr("fill", "green")
+    .text(function(d) { return d.name });
+
+text.filter(function(d) { 
+    return d.index <= 7 ? this : null; })
+		      .attr("class", "nodetext");
+
+text.filter(function(d) { 
+    return d.index > 7 ? this : null; })
+		      .attr("class", "tinytext");
+
+
+  force.on("tick", function() {
+    node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+  circle.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+
+  text.attr("transform", function(d) {
+    return "translate(" + d.x + "," + d.y + ")";
+  });
+});
+redrawHelper(defaultZoom, [defaultTranslateX, defaultTranslateY]);
+
+});
+}
+
+
+</script>
