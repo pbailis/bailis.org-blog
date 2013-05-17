@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Communication Costs in Real-World Networks"
+title: "Communication costs in real-world networks"
 date: 2013-05-17
 comments: false
 ---
@@ -29,7 +29,7 @@ and across datacenters, so we launched m1.small Amazon EC2 instances
 in each of the eight geo-distributed "Regions," across the three
 us-east "Availability Zones" (three co-located datacenters in
 Virginia), and within one datacenter (us-east-b). We measured RTTs
-between hosts for a week, measuring ping times at a granularity of one
+between hosts for a week at a granularity of one ping per
 second.<sup><a class="no-decorate"
 href="#methodology-note">1</a></sup>
 
@@ -47,8 +47,8 @@ class="no-decorate" href="#render-note">3</a></sup>
 #### High-level Takeaways
 
 Aside from the absolute numbers and the raw data, I think that there
-     are a few interesting trends. If you're a networking guru, these
-     may be obvious, but I found the magnitude of these trends
+     are a few interesting takeaways. If you're a networking guru,
+     these may be obvious, but I found the magnitude of these trends
      surprising. *(N.B. These aren't necessarily Amazon-specific, and
      this is hardly an indictment of AWS.)*<sup><a class="no-decorate"
      href="#latency-lit-note">4</a></sup>
@@ -73,18 +73,16 @@ Aside from the absolute numbers and the raw data, I think that there
  * **Cross-Datacenter Communication is Expensive** On average,
      communicating across availability zones was 2--7x slower than
      communicating within an availability zone; communicating across
-     geographic regions was 44--720x slower. There are several simple
-     possibilities to account for the difference between
-     regions---geographic distance being a major contributor. Notably,
-     latencies for cross-geographic regions performed relatively
-     better at the tail: at the 99.999th percentile, cross-region RTTs
-     were only 1.4--45x slower than us-east RTTs. I suspect this is
-     because transit delays on the wire are fixed, while routing and
-     software-related delays are more likely to vary. However, the
-     network distance between AZs *also* varied: us-east-b and
-     us-east-c had a minimum RTT of 693µs but us-east-c to us-east-d
-     had a minimum RTT of 1.31ms (and, on average, a difference of
-     almost 3.5x); not all local DC communication links are equal.
+     geographic regions was 44--720x slower. Notably, latencies for
+     cross-geographic regions performed relatively better at the tail:
+     at the 99.999th percentile, cross-region RTTs were only 1.4--45x
+     slower than us-east RTTs. I suspect this is because transit
+     delays on the wire are fixed, while routing and software-related
+     delays are more likely to vary. However, the network distance
+     between AZs *also* varied: us-east-b and us-east-c had a minimum
+     RTT of 693µs but us-east-c to us-east-d had a minimum RTT of
+     1.31ms (and, on average, a difference of almost 3.5x); not all
+     local DC communication links are equal.
 
 #### Implications for Distributed Systems Designers
 
@@ -122,19 +120,18 @@ are a start.
 <p><span class="footnote" id="methodology-note" markdown="1"><a
 class="no-decorate" href="#methodology-note">\[1\]</a>&nbsp;There's a
 non-negligible chance that this post generates debate with respect to
-our methodology and the applicability of these results. Up front, I
-think there's substantial room for improvement; my primary purpose for
-this experiment was to demonstrate the considerable gap between LAN
-and WAN latencies (if this is your cup of tea, let's talk!). It's
-possible that EC2 virtualization and the choice of m1.small instances
-could lead to higher latencies due to factors like multi-tenancy and
-VM migration. There's also no doubt that larger packet sizes would
-change these trends; indeed, in recent database benchmarking, we've
-observed several additional effects related to local processing and
-EC2 NIC behavior under heavy traffic. Please feel free to leave a
-comment or get in contact, especially if you have suggestions for
-improvement or have any data to share; I'll gladly link to it and use
-it if possible.</span></p>
+this methodology. My primary purpose for this experiment was to
+demonstrate the considerable gap between LAN and WAN latencies, which
+are easily captured by the data (if this is your cup of tea, let's
+talk!). However, it's possible that EC2 virtualization and the choice
+of m1.small instances led to higher latencies due to factors like
+multi-tenancy and VM migration. There's also no doubt that larger
+packet sizes would change these trends; indeed, in recent database
+benchmarking, we've observed several additional effects related to
+local processing and EC2 NIC behavior under heavy traffic. Please feel
+free to leave a comment or get in contact, especially if you have
+suggestions for improvement or have any data to share; I'll gladly
+link to it and use it if possible.</span></p>
 
 <p><span class="footnote" id="nc-note" markdown="2"><a
 class="no-decorate" href="#nc-note">\[2\]</a>&nbsp;If you like this
