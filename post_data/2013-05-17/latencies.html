@@ -276,8 +276,8 @@ var w = 320,
 
 var minRegion=Number.POSITIVE_INFINITY, maxRegion=Number.NEGATIVE_INFINITY, minAZ=Number.POSITIVE_INFINITY, maxAZ=Number.NEGATIVE_INFINITY, minEastB=Number.POSITIVE_INFINITY, maxEastB=Number.NEGATIVE_INFINITY;
 
-for(var src = 0; src < 7; ++src) {
-for(var dst = 0; dst < 7; ++dst) {
+for(var src = 0; src < 8; ++src) {
+for(var dst = 0; dst < 8; ++dst) {
   if(src == dst) { continue; }
   var rtt = pctileMap[src][dst][pctile];
   if(rtt < minRegion) { minRegion = rtt; }
