@@ -16,11 +16,10 @@ communication delay is the speed of light---not horrible, at least
 within a single datacenter---latencies are rarely this fast. I've been
 working on and benchmarking [communication-avoiding
 databases](http://www.bailis.org/blog/hat-not-cap-introducing-highly-available-transactions/)
-and, as part of my research, I wanted to quantify the behavior of
-real-world networks both within and across datacenters. This post
-contains both an interactive <a href="#explore">demo</a> of what we
-found, some high-level <a href="#highlevel_takeaways">trends</a>, and
-some <a
+and wanted to isolate and quantify the behavior of real-world networks
+both within and across datacenters. This post contains both an
+interactive <a href="#explore">demo</a> of what we found, some
+high-level <a href="#highlevel_takeaways">trends</a>, and some <a
 href="#implications_for_distributed_systems_designers">implications</a>
 for distributed systems designs.
 
@@ -54,12 +53,12 @@ Aside from the absolute numbers and the raw data, I think that there
      href="#latency-lit-note">4</a></sup>
 
  * **Latency >> Speed of Light** The minimum RTT between any two nodes
-     was 227µs---almost two orders of magnitude higher than the
+     was 227µs, almost two orders of magnitude higher than the
      theoretical minimum. Across continents, latencies were also
-     higher: Dublin to Sydney could take around 58 milliseconds but
-     requires around 350ms on average. Instead, routers, network
-     topologies, virtualization, and the end-host software stack all
-     get in the way.
+     higher than the speed of light requires: Dublin to Sydney could
+     take around 115 milliseconds but requires around 350ms on
+     average. Instead, routers, network topologies, virtualization,
+     and the end-host software stack all get in the way.
 
  * **Average << Tail** Within us-east-b, ping times averaged around
      400µs; this is close to Jeff Dean's figure from his [Numbers
