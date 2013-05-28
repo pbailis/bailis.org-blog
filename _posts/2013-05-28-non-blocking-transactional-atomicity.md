@@ -254,12 +254,12 @@ client died mid-write, the write (under last-writer-wins semantics) is
 overwritten by a higher timestamped write in `good`, or, more
 pragmatically, after a timeout.
 
-As presented here, servers can't `abort` updates. This isn't
+As presented here, servers don't `abort` updates, but this isn't
 fundamental. Instead of placing items in `pending`, servers can
 instead reject updates, so any updates that were placed into `pending`
-on other servers will never become stable. NBTA is weaker than a
-[non-blocking atomic commitment
-protocol](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.19.5491&rep=rep1&type=pdf)
+on other servers will never become stable. NBTA is weaker than
+traditional [non-blocking atomic commitment
+protocols](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.19.5491&rep=rep1&type=pdf)
 because it allows non-termination for individual transactional updates
 (that is, garbage collecting `pending` may take a while). The trick is
 that, in practice, as long as independent transactional updates can be
@@ -353,12 +353,13 @@ revoke the locks. This often requires some form of failure detection
 or timeout, which leads to awkward scenarios over asynchronous
 networks, coupled with effective unavailability prior to lock
 revocation. In a linearizable system, as in the example, we've already
-given up on availability, this isn't necessarily horrible, but it's a
-shame to block readers during updates. If we're going for a highly
-available (F=N-1 tolerant) setup (as we will <a
-href="#because_optimizations_are_awesome">later on</a>), locks are
-effectively a non-starter; locks are fundamentally at odds with
-availability on all replicas during partitions. </span></p>
+given up on availability, so this isn't necessarily horrible---but
+it's a shame (read: it's slow) to block readers during updates and
+vice-versa. If we're going for a highly available (F=N-1
+fault-tolerant) setup (as we will&nbsp;<a
+href="#because_optimizations_are_awesome">later on</a>), locks are a
+non-starter; locks are fundamentally at odds with providing available
+operation on all replicas during partitions. </span></p>
 
 <p><span class="footnote" id="ha-note" markdown="3"><a
 class="no-decorate" href="#ha-note">\[3\]</a>&nbsp; Hold up, cowboy!
@@ -369,7 +370,7 @@ the event of replica failures (i.e., when people will read my
 writes). Readers will *always* be able to read transactionally atomic
 sets of data items from non-failing replicas; however, depending on
 the desired availability, reads may not be the most "up to date" set
-that is available on some servers. The way to look at this trade-off
+that is available on some servers. One way to look at this trade-off
 is as follows:</span>
 <ol class="footnote">
 <li>You can achieve linearizability and
