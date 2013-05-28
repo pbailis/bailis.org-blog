@@ -17,7 +17,7 @@ Performing multi-object updates is a common but difficult problem in
 real-world distributed systems. When updating two or more items at
 once, it's useful for other readers of those items to observe
 atomicity: *either all of your updates are visible or none of them
-are*.<sup><a class="no-decorate" href="#atomicity-note">2</a></sup>
+are*.<sup><a class="no-decorate" href="#atomicity-note">1</a></sup>
 This crops up in a bunch of contexts, from social network graphs
 (e.g., [Facebook's Tao
 system](http://hive.asu.edu/sigmod12/index.php?option=com_community&view=courses&task=viewpresentation&groupid=644&Itemid=0),
@@ -35,21 +35,24 @@ most-requested feature.
 #### Existing Techniques: Locks, Entity Groups, and "Fuck-it Mode"
 
 The state of the art in transactional multi-object update typically
-uses one of three strategies. First, you can use locks to update
-multiple items at once. Grab write locks on update and read locks for
-reads and you'll ensure transactional atomicity. However, in a
-distributed environment, the possibility of partial failure and
-network latency means locking can lead to a Bad Time&trade;.<sup><a
-class="no-decorate" href="#lock-note">2</a></sup> Second, you
-can co-locate distributed objects you'd like to update together. This
-strategy (often called ["entity
+uses one of three strategies. 
+
+ * You can use locks to update multiple items at once. Grab write locks
+on update and read locks for reads and you'll ensure transactional
+atomicity. However, in a distributed environment, the possibility of
+partial failure and network latency means locking can lead to a Bad
+Time&trade;.<sup><a class="no-decorate" href="#lock-note">2</a></sup>
+
+ * You can co-locate distributed objects you'd like to update
+together. This strategy (often called ["entity
 groups"](http://www.cidrdb.org/cidr2011/Papers/CIDR11_Paper32.pdf))
 makes transactional atomicity easy: locking on a single machine is
 fast and not subject to the problems of distributed locking under
 partial failure and network latency. Unfortunately, this solution
 impacts data layout and distribution and does not work well for data
-that is not easily partitioned (social networks, anyone?). Finally,
-you can use "fuck-it mode," whereby you simultaneously update all keys
+that is not easily partitioned (social networks, anyone?). 
+
+ * You can use "fuck-it mode," whereby you simultaneously update all keys
 without any concurrency control and hope readers observe transactional
 atomicity. This final option is remarkably common: it scales well and
 is applicable to any system, but it doesn't provide any atomicity
@@ -63,10 +66,8 @@ atomicity without the use of locks. Specifically, our solution does
 not block readers or writers in the event of arbitrary process failure
 and, as long as readers and writers can contact a server for each data
 item they want to access, the system can guarantee transactional
-atomicity of both reads or writes (i.e., is [highly
-available](http://www.bailis.org/papers/hat-hotos2013.pdf) for
-transactionally atomic reads and writes). At a high level, key idea is
-to avoid performing in-place updates and to use additional metadata to
+atomicity of both reads or writes. At a high level, key idea is to
+avoid performing in-place updates and to use additional metadata to
 substitute for synchronous synchronization across replicas.
 
 <style>
@@ -85,7 +86,7 @@ replication later.)
 
 <img class="big" src="../post_data/2013-05-28/1-setup.png">
 
-#### Better Living via *Pending* and *Good*
+#### *good*, *pending*, and Invariants
 
 Let's split each server's storage into two parts: `good` and
 `pending`. We will maintain the invariant that every write stored in
@@ -244,13 +245,14 @@ additional metadata to address the case where some servers have
 delivered writes but others have not yet, providing safety (e.g., [see
 Algorithm
 3.4](http://www.newbooks-services.de/MediaFiles/Texts/7/9783642152597_Excerpt_001.pdf)). Formally,
-NBTA as presented here does not guarantee termination: servers may
-never become aware that a write in `pending` will never become stable;
-this requires failure detection and, in practice, messages can be
-removed from `pending` once sibling servers have been marked as dead,
-the server detects that a client died mid-transaction, (under
-last-writer-wins semantics) is overwritten by a higher timestamped
-write to `good`, or, more pragmatically, after a timeout.
+NBTA as presented here does not guarantee termination: servers may not
+realize that a write in `pending` will never become
+stable. Recognizing a "dead write" in `pending` requires failure
+detection and, in practice, writes can be removed from `pending` once
+sibling servers have been marked as dead, the server detects that a
+client died mid-write, the write (under last-writer-wins semantics) is
+overwritten by a higher timestamped write in `good`, or, more
+pragmatically, after a timeout.
 
 As presented here, servers can't `abort` updates. This isn't
 fundamental. Instead of placing items in `pending`, servers can
@@ -261,8 +263,8 @@ protocol](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.19.5491&rep=r
 because it allows non-termination for individual transactional updates
 (that is, garbage collecting `pending` may take a while). The trick is
 that, in practice, as long as independent transactional updates can be
-executed concurrently (as is the case in write-only operations and as
-is the case for all [Highly Available
+executed concurrently (as is the case with last-writer-wins and as is
+the case for all [Highly Available
 Transaction](http://www.bailis.org/blog/hat-not-cap-introducing-highly-available-transactions/))
 semantics, a stalled transactional update won't affect other
 updates. In contrast, traditional techniques like two-phase commit
@@ -285,26 +287,27 @@ have a long history in database systems. The key in NBTA is to achieve
 transactional atomicity while avoiding a centralized timestamp
 authority or concurrency control mechanism.
 
-All this said, I haven't seen a highly available transactionally
-atomic update algorithm like NBTA before; if you have, please do [let
-me know](http://www.bailis.org/contact.html).
+All this said, I haven't seen a distributed transactional atomicity
+algorithm like NBTA before; if you have, please do [let me
+know](http://www.bailis.org/contact.html).
 
 ## Conclusion
 
 This post demonstrated how to achieve atomic multi-key updates across
-arbitrary data partitions without sacrificing high availability, or
-the ability to provide a safe response despite arbitrary failures of
-readers, writers, and (depending on the configuration), servers. The
-key idea was to establish an invariant that all writes have to be
-present on the appropriate servers before showing them to readers. The
-challenge was in solving a race condition between showing writes on
-different servers---trivial for locks but harder for a highly
-available system. If you've made it this far, you've probably followed
-along, but I look forward to following up with a post on how to
-perform consistent secondary indexing via similar techniques---a
-potential killer application for NBTA, particularly given that it's
-[thought to be impossible in a scalable
-system](https://cs.brown.edu/courses/cs227/archives/2012/papers/weaker/cidr07p15.pdf).
+arbitrary data partitions without using locks or losing the ability to
+provide a safe response despite arbitrary failures of readers,
+writers, and (depending on the configuration) servers. The key idea
+was to establish an invariant that all writes have to be present on
+the appropriate servers before showing them to readers. The challenge
+was in solving a race condition between showing writes on different
+servers---trivial for locks but harder for a highly available
+system. And it works in practice--rather well, and much better than
+similar lock-based techniques! If you've made it this far, you've
+probably followed along, but I look forward to following up with a
+post on how to perform consistent secondary indexing via similar
+techniques---a potential killer application for NBTA, particularly
+given that it's [often considered impossible in scalable
+systems](https://cs.brown.edu/courses/cs227/archives/2012/papers/weaker/cidr07p15.pdf).
 
 As always, feedback is welcomed and encouraged. If you're interested
 in these algorithms in your system, let's talk.
@@ -346,42 +349,49 @@ objects. To avoid further confusion, we'll call this "atomicity"
 class="no-decorate" href="#lock-note">\[2\]</a>&nbsp; More
 specifically, there are a bunch of ways things can get weird. If a
 client dies while holding locks, then the servers should eventually
-revoke the locks. This often requires some form of timeout, which
-leads to awkward scenarios over asynchronous networks, coupled with
-effective unavailability prior to lock revocation. There are similarly
-difficult scenarios where a client locks across two servers, only to
-have one server partitioned away from the client and other server. In
-a linearizable system, as in the example, we've already given up on
-availability, so maybe this isn't terrible. If we're going for a
-highly available (F=N-1 tolerant) setup (as in the later "Replication"
-modification), locks are effectively a non-starter; good luck getting
-locks on all of your replicas. Fundamentally, even in the linearizable
-case, it's a shame to block readers during updates.</span></p>
+revoke the locks. This often requires some form of failure detection
+or timeout, which leads to awkward scenarios over asynchronous
+networks, coupled with effective unavailability prior to lock
+revocation. In a linearizable system, as in the example, we've already
+given up on availability, this isn't necessarily horrible, but it's a
+shame to block readers during updates. If we're going for a highly
+available (F=N-1 tolerant) setup (as we will <a
+href="#because_optimizations_are_awesome">later on</a>), locks are
+effectively a non-starter; locks are fundamentally at odds with
+availability on all replicas during partitions. </span></p>
 
 <p><span class="footnote" id="ha-note" markdown="3"><a
 class="no-decorate" href="#ha-note">\[3\]</a>&nbsp; Hold up, cowboy!
-What does this replication mean for availability?  As I'll talk
+What does this replication mean for availability?  As I'll discuss
 about&nbsp;<a href="#so_what_just_happened">soon</a>, we haven't
 talked about when the effects of transactions will become visible in
-the event of replica failures. Readers will *always* be able to read
-transactionally atomic sets of data items from non-failing replicas;
-however, depending on the desired availability, reads may not be the
-most "up to date" set that is available on some servers. The way to
-look at this trade-off is as follows: **i.)** You can achieve
-linearizability and transactional atomicity, whereby everyone sees all
-writes after they complete, but writes may take an indefinite amount
-of time to complete ("CP"), **ii.)** you can achieve read-your-writes
-and transactional atomicity, whereby you can see your writes after
-they complete, but you'll have to remain "sticky" and continue to
-contact the same (logical) set of servers during execution (your
-"sticky" neighboring clients will also see your writes; "Sticky-CP"),
-or **iii.)** you can achieve transactional atomicity and be able to
-contact any server but writes won't become visible until all servers
-you might read from have received the transactional writes ("AP"; at
-the risk of sub-footnoting myself, I'll note that there are cool and
-useful connections to different kinds of [failure
+the event of replica failures (i.e., when people will read my
+writes). Readers will *always* be able to read transactionally atomic
+sets of data items from non-failing replicas; however, depending on
+the desired availability, reads may not be the most "up to date" set
+that is available on some servers. The way to look at this trade-off
+is as follows:</span>
+<ol class="footnote">
+<li>You can achieve linearizability and
+transactional atomicity, whereby everyone sees all writes after they
+complete, but writes may take an indefinite amount of time to complete
+("CP")</li><br>
+<li>You can achieve read-your-writes and transactional
+atomicity, whereby you can see your writes after they complete, but
+you'll have to remain "sticky" and continue to contact the same
+(logical) set of servers during execution (your "sticky" neighboring
+clients will also see your writes; "Sticky-CP")</li><br>
+<li>You can
+achieve transactional atomicity and be able to contact any server, but
+writes won't become visible until all servers you might read from have
+received the transactional writes ("AP"; at the risk of sub-footnoting
+myself, I'll note that there are cool and useful connections to
+different kinds of [failure
 detectors](http://pine.cs.yale.edu/pinewiki/FailureDetectors)
-here). Transactionally atomic [safety
+here).</li>
+</ol>
+<span class="footnote">
+Transactionally atomic [safety
 properties](http://www.bailis.org/blog/safety-and-liveness-eventual-consistency-is-not-safe/)
 are guaranteed in all three scenarios, but the safety guarantees on
 *recency* offered by each vary. The main ideas presented here apply to
