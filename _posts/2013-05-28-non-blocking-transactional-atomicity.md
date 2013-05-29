@@ -219,7 +219,7 @@ We've built a database based on LevelDB that implements NBTA with all
 of the above optimizations except metadata pruning ([related
 pseudocode here](../post_data/2013-05-28/ta-rc-pseudocode.png)). Under
 the Yahoo! Cloud Serving Benchmark, NBTA transactions of 8 operations
-each achieve between 33% (all writes) and 4.8% (all reads) of the peak
+each achieve within 33% (all writes) to 4.8% (all reads) of the peak
 throughput of eventually consistent (i.e., "fuck-it") operation (with
 3.8--48% higher latency). Our implementation scales linearly, to over
 250,000 operations per second for transactions of length 8 consisting
