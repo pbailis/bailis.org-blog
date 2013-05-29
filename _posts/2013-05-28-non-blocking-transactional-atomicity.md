@@ -35,24 +35,24 @@ most-requested feature.
 #### Existing Techniques: Locks, Entity Groups, and "Fuck-it Mode"
 
 The state of the art in transactional multi-object update typically
-uses one of three strategies. 
+employs one of three strategies. 
 
- * You can use locks to update multiple items at once. Grab write locks
+ * Use locks to update multiple items at once. Grab write locks
 on update and read locks for reads and you'll ensure transactional
 atomicity. However, in a distributed environment, the possibility of
 partial failure and network latency means locking can lead to a Bad
 Time&trade;.<sup><a class="no-decorate" href="#lock-note">2</a></sup>
 
- * You can co-locate distributed objects you'd like to update
-together. This strategy (often called ["entity
+ * Co-locate distributed objects you'd like to update together. This
+strategy (often called ["entity
 groups"](http://www.cidrdb.org/cidr2011/Papers/CIDR11_Paper32.pdf))
 makes transactional atomicity easy: locking on a single machine is
 fast and not subject to the problems of distributed locking under
 partial failure and network latency. Unfortunately, this solution
 impacts data layout and distribution and does not work well for data
-that is not easily partitioned (social networks, anyone?). 
+that is difficult to partition (social networks, anyone?).
 
- * You can use "fuck-it mode," whereby you simultaneously update all keys
+ * Use "fuck-it mode," whereby you simultaneously update all keys
 without any concurrency control and hope readers observe transactional
 atomicity. This final option is remarkably common: it scales well and
 is applicable to any system, but it doesn't provide any atomicity
@@ -66,7 +66,7 @@ atomicity without the use of locks. Specifically, our solution does
 not block readers or writers in the event of arbitrary process failure
 and, as long as readers and writers can contact a server for each data
 item they want to access, the system can guarantee transactional
-atomicity of both reads or writes. At a high level, key idea is to
+atomicity of both reads or writes. At a high level, the key idea is to
 avoid performing in-place updates and to use additional metadata to
 substitute for synchronous synchronization across replicas.
 
@@ -91,10 +91,11 @@ replication later.)
 Let's split each server's storage into two parts: `good` and
 `pending`. We will maintain the invariant that every write stored in
 `good` will have its transactional sibling writes (i.e., the other
-writes originating from the multi-put) present on each of their
-respective servers, either in `good` or `pending`. That is, if `x=1`
-is in `good` on the server for `x`, then, in the example above, `y=1`
-will be guaranteed to be in `good` or `pending` on the server for `y`.
+writes originating from the transactionally atomic operation) present
+on each of their respective servers, either in `good` or
+`pending`. That is, if `x=1` is in `good` on the server for `x`, then,
+in the example above, `y=1` will be guaranteed to be in `good` or
+`pending` on the server for `y`.
 
 <img src="../post_data/2013-05-28/2-invariant.png">
 
@@ -126,8 +127,8 @@ its read from `pending`.
 To handle this race condition, we attach additional information to
 each write: a list of transactional siblings. At the start of a
 multi-key update, clients generate a unique timestamp for all of their
-writes (say, client ID plus local clock), which they attach to each
-write, along with a list of the keys written to in the
+writes (say, client ID plus local clock or random hash), which they
+attach to each write, along with a list of the keys written to in the
 transaction. Now, when a client reads from `good`, it will have a list
 of transactional siblings with the same timestamp. When the client
 requests a read from one of those sibling items, the server can fetch
@@ -148,11 +149,10 @@ server. To make sure readers can access siblings in both `good` and
 `pending`, we attached additional metadata to each write that can be
 used by servers in the event of skews in stable write detection across
 servers. If readers or writers fail, there is no effect on other
-servers or other readers. Specifically, if writers fail, any partially
-written multi-key updates will never become stable, and servers can
-optionally guarantee write stability by performing `pending`
-acknowledgments (i.e., performing the second phase of the client
-write) for themselves.
+readers or writers. Any partially written multi-key updates will never
+become stable, and servers can optionally guarantee write stability by
+performing `pending` acknowledgments (i.e., performing the second
+phase of the client write) for themselves.
 
 ## It Gets Better!
 
@@ -219,9 +219,9 @@ We've built a database based on LevelDB that implements NBTA with all
 of the above optimizations except metadata pruning ([related
 pseudocode here](../post_data/2013-05-28/ta-rc-pseudocode.png)). Under
 the Yahoo! Cloud Serving Benchmark, NBTA transactions of 8 operations
-each achieve between 33% (all writes) and 4.8% (all reads) of the
-throughput of eventually consistent operation (and between 3.8% and
-48% higher latency). Our implementation scales linearly, to over
+each achieve between 33% (all writes) and 4.8% (all reads) of the peak
+throughput of eventually consistent (i.e., "fuck-it") operation (with
+3.8--48% higher latency). Our implementation scales linearly, to over
 250,000 operations per second for transactions of length 8 consisting
 of 50% reads and 50% writes on a deployment of 50 EC2 instances.
 
@@ -363,36 +363,30 @@ operation on all replicas during partitions. </span></p>
 
 <p><span class="footnote" id="ha-note" markdown="3"><a
 class="no-decorate" href="#ha-note">\[3\]</a>&nbsp; Hold up, cowboy!
-What does this replication mean for availability?  As I'll discuss
-about&nbsp;<a href="#so_what_just_happened">soon</a>, we haven't
+What does this replication mean for availability?  As I'll
+discuss&nbsp;<a href="#so_what_just_happened">soon</a>, we haven't
 talked about when the effects of transactions will become visible in
 the event of replica failures (i.e., when people will read my
 writes). Readers will *always* be able to read transactionally atomic
 sets of data items from non-failing replicas; however, depending on
 the desired availability, reads may not be the most "up to date" set
 that is available on some servers. One way to look at this trade-off
-is as follows:</span>
-<ol class="footnote">
-<li>You can achieve linearizability and
-transactional atomicity, whereby everyone sees all writes after they
-complete, but writes may take an indefinite amount of time to complete
-("CP")</li><br>
-<li>You can achieve read-your-writes and transactional
-atomicity, whereby you can see your writes after they complete, but
-you'll have to remain "sticky" and continue to contact the same
-(logical) set of servers during execution (your "sticky" neighboring
-clients will also see your writes; "Sticky-CP")</li><br>
-<li>You can
-achieve transactional atomicity and be able to contact any server, but
-writes won't become visible until all servers you might read from have
-received the transactional writes ("AP"; at the risk of sub-footnoting
-myself, I'll note that there are cool and useful connections to
-different kinds of [failure
+is as follows:</span> <ol class="footnote"> <li>You can achieve
+linearizability and transactional atomicity, whereby everyone sees all
+writes after they complete, but writes may take an indefinite amount
+of time to complete ("CP")</li><br> <li>You can achieve
+read-your-writes and transactional atomicity, whereby you can see your
+writes after they complete, but you'll have to remain "sticky" and
+continue to contact the same (logical) set of servers during execution
+(your "sticky" neighboring clients will also see your writes;
+"Sticky-CP")</li><br> <li>You can achieve transactional atomicity and
+be able to contact any server, but writes won't become visible until
+all servers you might read from have received the transactional writes
+("AP"; at the risk of sub-footnoting myself, I'll note that there are
+cool and useful connections to different kinds of [failure
 detectors](http://pine.cs.yale.edu/pinewiki/FailureDetectors)
-here).</li>
-</ol>
-<span class="footnote">
-Transactionally atomic [safety
+here).</li> </ol> <span class="footnote"> Transactionally atomic
+[safety
 properties](http://www.bailis.org/blog/safety-and-liveness-eventual-consistency-is-not-safe/)
 are guaranteed in all three scenarios, but the safety guarantees on
 *recency* offered by each vary. The main ideas presented here apply to
