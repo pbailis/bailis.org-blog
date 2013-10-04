@@ -10,6 +10,13 @@ comments: false
  load; different Dynamo-style stores handle this trade-off
  differently, and there's room for improvement.*
 
+**Update 10/2013: Cassandra has since added support for ["speculative
+  retry"](http://www.datastax.com/dev/blog/rapid-read-protection-in-cassandra-2-0-2)--effectively,
+  Dean's suggestions applied to Dynamo reads, as described below. The
+  date on the
+  [ticket](https://issues.apache.org/jira/browse/CASSANDRA-4705) and
+  the original date of this post are interesting to consider.**
+
 At scale, tail latencies matter. When serving high volumes of traffic,
 even a miniscule fraction of requests corresponds to a large number of
 operations.  Latency <a
