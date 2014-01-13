@@ -153,4 +153,4 @@ often a matter of user experience rather than an issue of data
 integrity. One benefit is that web services are frequently
 single-writer-per-data-item, meaning conflicts are rare or impossible
 as long as the single writer observes her updates. But, in general, I
-haven't encountered many constraint on *data* that benefit from stickiness.
+haven't encountered many constraints on *data* that benefit from stickiness.
