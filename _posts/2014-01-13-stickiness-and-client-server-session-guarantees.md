@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Stickiness and Client-Server Session Guarantees"
+title: "Stickiness and client-server session guarantees"
 date: 2014-1-13
 comments: false
 ---

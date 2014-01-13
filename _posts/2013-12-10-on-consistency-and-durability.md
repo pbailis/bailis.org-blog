@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "On Consistency and Durability"
+title: "On consistency and durability"
 date: 2013-12-10
 comments: false
 ---
