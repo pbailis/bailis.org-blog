@@ -5,7 +5,7 @@ date: 2014-1-13
 comments: false
 ---
 
-**Session Guarantees**
+#### Session Guarantees
 
 One of the most common consistency requirements I encounter in modern
 web services is a guarantee called "read your writes" (RYW): each
@@ -33,7 +33,7 @@ early systems like
 discovered is that there are implementation techniques for achieving
 session guarantees without paying these costs.
 
-**Session Guarantees and Availability**
+#### Session Guarantees and Availability
 
 Interestingly (and as the subject of this post), most---but not
 all---session guarantees are achievable with CAP-style
@@ -67,7 +67,7 @@ causal consistency is not available in a client-server model). The
 question is: if RYW isn't available, why does it still seem to be
 cheaper than, say, linearizability?
 
-**Sticky Availability and Mechanisms**
+#### Sticky Availability and Mechanisms
 
 To understand why RYW is still "cheap" but not quite as cheap as other
 session guarantees, we formalized a new model of availability. RYW is
@@ -108,7 +108,7 @@ sticky available (but non-linearizable) architectures, hinting that
 these approaches may either fall into the realm of what Jim Gray calls
 "exotics" or, more optimistically, may simply be on the engineering horizon.
 
-**Why Sticky Availability Deserves More Study**
+#### Why Sticky Availability Deserves More Study
 
 Stickiness only becomes evident in a client-server model. In
 traditional models of distributed computing, stickiness is often
