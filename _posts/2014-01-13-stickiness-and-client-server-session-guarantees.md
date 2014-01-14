@@ -47,8 +47,8 @@ that read operations only return writes when the writes are present on
 all servers. This ensures that, regardless of which server a client
 connects to, it won't be forced to read older data and "go back in time."
 
-Via a classic partitioning argument, we can see what RYW is not
-achievable under this stringent availability model. We can partition a
+Via a classic partitioning argument, we can see that RYW is not
+achievable under the stringent CAP availability model. We can partition a
 client C away from all but one server S and require C to perform a
 write. If our implementation is available, S should eventually
 acknowledge the write as successful. If C reads from S, it'll achieve
@@ -73,7 +73,7 @@ To understand why RYW is still "cheap" but not quite as cheap as other
 session guarantees, we formalized a new model of availability. RYW is
 indeed achievable (as Vogels points out), if clients stay connected,
 or are "sticky" with, a server (really, a complete copy of the
-database). This is a stronger assumption than CAP-style availability,
+database). This requires a stronger assumption than CAP-style availability,
 but it's still much weaker than, say, requiring that clients contact a
 majority of servers. In the [HAT
 paper](http://www.bailis.org/papers/hat-vldb2014.pdf), we formalize
@@ -89,7 +89,7 @@ group](http://www.bailis.org/papers/bolton-sigmod2013.pdf) and [Marc
 Shapiro's CRDT group](http://arxiv.org/pdf/1310.3107.pdf)) leverage
 these techniques and can provide unparalleled low latency. The problem
 here is that caches can grow large, and, based on my experiences, it's
-unclear how well this works for general-purpose applications. Second,
+unclear how well caching works for general-purpose applications. Second,
 clients can use sticky request routing to ensure their requests always
 contact the same servers. In a single datacenter, this can be
 difficult, requiring the storage tier's request routers to know the
@@ -138,7 +138,7 @@ visibility" and availability. In our above, available implementation
 of monotonic reads, a write might never become visible to any readers
 if a non-failed server is permanently partitioned. In contrast, if we
 have stickiness, the write can become visible to the writer (and,
-possible, other readers) without sacrificing liveness. I haven't seen
+possibly, other readers) without sacrificing liveness. I haven't seen
 a system evaluate this trade-off in depth, though many systems
 (including the HAT research) have addressed the more general (and
 classic) trade-off between global visibility and scalability.
