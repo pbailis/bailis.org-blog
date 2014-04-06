@@ -9,7 +9,7 @@ comments: false
 
 One of the most common consistency requirements I encounter in modern
 web services is a guarantee called "read your writes" (RYW): each
-user's reads should reflect its prior writes. This guarantees that,
+user's reads should reflect the client's prior writes. This means that,
 for example, once I successfully post a Tweet, I'll be able to read it
 after a page refresh. Without RYW, I have no idea whether my update
 succeeded or was lost, and I might end up posting *again*, resulting
@@ -71,11 +71,11 @@ cheaper than, say, linearizability?
 
 To understand why RYW is still "cheap" but not quite as cheap as other
 session guarantees, we formalized a new model of availability. RYW is
-indeed achievable (as Vogels points out), if clients stay connected,
-or are "sticky" with, a server (really, a complete copy of the
-database). This requires a stronger assumption than CAP-style availability,
-but it's still much weaker than, say, requiring that clients contact a
-majority of servers. In the [HAT
+indeed achievable (as Vogels points out) if clients stay connected
+to---or are "sticky" with---a server (really, a complete copy of the
+database). This requires a stronger assumption than CAP-style
+availability, but it's still much weaker than, say, requiring that
+clients contact a majority of servers. In the [HAT
 paper](http://www.bailis.org/papers/hat-vldb2014.pdf), we formalize
 this as "sticky availability" (page 4, Section 4.1).
 
