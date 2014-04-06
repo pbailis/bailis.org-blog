@@ -1,2 +1,3 @@
 baseurl: http://www.bailis.org/blog
 permalink: /:title/
+markdown: redcarpet
